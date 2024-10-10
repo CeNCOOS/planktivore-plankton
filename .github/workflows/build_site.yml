@@ -1,0 +1,39 @@
+name: Generate Website
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # Install dependencies (if any)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      # Run Python script to generate the HTML
+      - name: Generate HTML from data.txt
+        run: |
+          python generate_guide_html.py
+
+      # Deploy to gh-pages branch
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .  # The directory where the generated HTML file is located (root of the repo)
+          publish_branch: gh-pages
